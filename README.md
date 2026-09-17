@@ -6,6 +6,20 @@
 
 ## 安装与回退
 
+### 通过插件市场源安装
+
+在 NewAPI 插件市场的源管理中添加以下索引地址（不是 GitHub 仓库网页地址）：
+
+```text
+https://raw.githubusercontent.com/srchengtao2025/newapi-alibaba-qwen-plugin/main/index.json
+```
+
+源名称建议填写 `RezeAI Qwen 扩展（非官方）`。刷新后选择 Alibaba Qwen 扩展的 `1.3.1-qwen.2`，安装并确认该版本已激活。若已有 Alibaba 插件，先备份并等待任务结束；本扩展使用同一个 `alibaba` 键，不会作为另一个并行插件安装。不要误选官方源覆盖该扩展。
+
+仓库已按用户授权公开，无需 GitHub Token。运行环境仍需能访问 `raw.githubusercontent.com`。安装仅导入插件，不会自动配置百炼密钥、渠道或 Qwen 计费表达式。
+
+### 手动安装与回退
+
 1. 备份当前 Alibaba 插件和 NewAPI 数据库；等待正在执行的任务结束。
 2. 在插件管理中导入 `plugins/tasks/alibaba/1.3.1-qwen.2/plugin.js`。
 3. **上传不等于激活**：在版本管理中激活 `1.3.1-qwen.2`，确认运行状态为 registered。

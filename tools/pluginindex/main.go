@@ -143,7 +143,7 @@ func buildIndex(root string) ([]byte, error) {
 		}
 	}
 
-	index := indexFile{IndexVersion: 1, Name: "New API Official Plugins", Plugins: make([]indexPlugin, 0, len(byKey))}
+	index := indexFile{IndexVersion: 1, Name: "RezeAI Alibaba Qwen Extensions (Unofficial)", Plugins: make([]indexPlugin, 0, len(byKey))}
 	for _, plugin := range byKey {
 		sort.Slice(plugin.Versions, func(i, j int) bool {
 			return semverLess(plugin.Versions[j].Version, plugin.Versions[i].Version)

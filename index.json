@@ -1,6 +1,6 @@
 {
   "indexVersion": 1,
-  "name": "New API Official Plugins",
+  "name": "RezeAI Alibaba Qwen Extensions (Unofficial)",
   "plugins": [
     {
       "key": "alibaba",
