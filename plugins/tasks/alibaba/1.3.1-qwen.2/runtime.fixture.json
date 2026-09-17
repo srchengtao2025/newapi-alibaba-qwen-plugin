@@ -1,0 +1,4237 @@
+{
+  "cases": [
+    {
+      "name": "qwen-image-3.0.sync.request",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "seed": 0,
+            "prompt_extend": false,
+            "enable_thinking": false,
+            "watermark": false,
+            "metadata": {
+              "upstream_mode": "sync"
+            }
+          }
+        }
+      ],
+      "expected": {
+        "url": "https://fixture.invalid/api/v1/services/aigc/multimodal-generation/generation",
+        "method": "POST",
+        "headers": {
+          "Authorization": "Bearer fixture-not-a-secret",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "model": "qwen-image-3.0",
+          "input": {
+            "messages": [
+              {
+                "role": "user",
+                "content": [
+                  {
+                    "text": "A red teapot"
+                  }
+                ]
+              }
+            ]
+          },
+          "parameters": {
+            "n": 1,
+            "size": "1024*1024",
+            "seed": 0,
+            "prompt_extend": false,
+            "enable_thinking": false,
+            "watermark": false
+          }
+        },
+        "action": "text_to_image",
+        "responseType": "json"
+      }
+    },
+    {
+      "name": "qwen-image-3.0.async.request",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "seed": 0,
+            "prompt_extend": false,
+            "enable_thinking": false,
+            "watermark": false,
+            "metadata": {
+              "upstream_mode": "async"
+            }
+          }
+        }
+      ],
+      "expected": {
+        "url": "https://fixture.invalid/api/v1/services/aigc/image-generation/generation",
+        "method": "POST",
+        "headers": {
+          "Authorization": "Bearer fixture-not-a-secret",
+          "Content-Type": "application/json",
+          "X-DashScope-Async": "enable"
+        },
+        "body": {
+          "model": "qwen-image-3.0",
+          "input": {
+            "messages": [
+              {
+                "role": "user",
+                "content": [
+                  {
+                    "text": "A red teapot"
+                  }
+                ]
+              }
+            ]
+          },
+          "parameters": {
+            "n": 1,
+            "size": "1024*1024",
+            "seed": 0,
+            "prompt_extend": false,
+            "enable_thinking": false,
+            "watermark": false
+          }
+        },
+        "action": "text_to_image",
+        "responseType": "json"
+      }
+    },
+    {
+      "name": "qwen-image-3.0.reserve.fixed",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024"
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 0,
+        "qima_input_2k": 0,
+        "qima_output_1k": 1,
+        "qima_output_2k": 0
+      }
+    },
+    {
+      "name": "qwen-image-3.0.reserve.auto",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "auto",
+            "image": [
+              "https://fixture.invalid/a",
+              "https://fixture.invalid/b"
+            ],
+            "n": 6
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 2,
+        "qima_input_2k": 2,
+        "qima_output_1k": 6,
+        "qima_output_2k": 6
+      }
+    },
+    {
+      "name": "qwen-image-3.0.reserve.2k",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "2048x2048",
+            "image": "data:image/png;base64,YQ=="
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 0,
+        "qima_input_2k": 1,
+        "qima_output_1k": 0,
+        "qima_output_2k": 1
+      }
+    },
+    {
+      "name": "qwen-image-3.0.complete.1k",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "provider-request",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    },
+                    {
+                      "image": "https://fixture.invalid/image-1.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 3,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 2,
+            "output_image_type": "qima_output_1k"
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 3,
+        "qima_input_2k": 0,
+        "qima_output_1k": 2,
+        "qima_output_2k": 0
+      }
+    },
+    {
+      "name": "qwen-image-3.0.complete.2k",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "provider-request",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_2k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_2k"
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 0,
+        "qima_input_2k": 0,
+        "qima_output_1k": 0,
+        "qima_output_2k": 1
+      }
+    },
+    {
+      "name": "qwen-image-3.0.failed.noUsage",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "status": "FAILURE"
+        },
+        {
+          "request_id": "provider-request",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k"
+          }
+        }
+      ],
+      "expected": {}
+    },
+    {
+      "name": "qwen-image-3.0.immediate",
+      "hook": "parseSubmitResponse",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "upstream_mode": "sync"
+            }
+          }
+        },
+        {
+          "body": {
+            "request_id": "provider-request",
+            "output": {
+              "task_status": "SUCCEEDED",
+              "choices": [
+                {
+                  "message": {
+                    "role": "assistant",
+                    "content": [
+                      {
+                        "image": "https://fixture.invalid/image-0.png"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "usage": {
+              "input_image_count": 0,
+              "input_image_type": "qima_input_1k",
+              "output_image_count": 1,
+              "output_image_type": "qima_output_1k"
+            }
+          }
+        }
+      ],
+      "expected": {
+        "taskId": "public-test",
+        "taskData": {
+          "request_id": "provider-request",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k"
+          }
+        },
+        "immediate": {
+          "status": "SUCCESS",
+          "progress": "100%",
+          "url": "https://fixture.invalid/image-0.png"
+        }
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.sync.request",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "seed": 0,
+            "prompt_extend": false,
+            "enable_thinking": false,
+            "watermark": false,
+            "metadata": {
+              "upstream_mode": "sync"
+            }
+          }
+        }
+      ],
+      "expected": {
+        "url": "https://fixture.invalid/api/v1/services/aigc/multimodal-generation/generation",
+        "method": "POST",
+        "headers": {
+          "Authorization": "Bearer fixture-not-a-secret",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "model": "qwen-image-3.0-pro",
+          "input": {
+            "messages": [
+              {
+                "role": "user",
+                "content": [
+                  {
+                    "text": "A red teapot"
+                  }
+                ]
+              }
+            ]
+          },
+          "parameters": {
+            "n": 1,
+            "size": "1024*1024",
+            "seed": 0,
+            "prompt_extend": false,
+            "enable_thinking": false,
+            "watermark": false
+          }
+        },
+        "action": "text_to_image",
+        "responseType": "json"
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.async.request",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "seed": 0,
+            "prompt_extend": false,
+            "enable_thinking": false,
+            "watermark": false,
+            "metadata": {
+              "upstream_mode": "async"
+            }
+          }
+        }
+      ],
+      "expected": {
+        "url": "https://fixture.invalid/api/v1/services/aigc/image-generation/generation",
+        "method": "POST",
+        "headers": {
+          "Authorization": "Bearer fixture-not-a-secret",
+          "Content-Type": "application/json",
+          "X-DashScope-Async": "enable"
+        },
+        "body": {
+          "model": "qwen-image-3.0-pro",
+          "input": {
+            "messages": [
+              {
+                "role": "user",
+                "content": [
+                  {
+                    "text": "A red teapot"
+                  }
+                ]
+              }
+            ]
+          },
+          "parameters": {
+            "n": 1,
+            "size": "1024*1024",
+            "seed": 0,
+            "prompt_extend": false,
+            "enable_thinking": false,
+            "watermark": false
+          }
+        },
+        "action": "text_to_image",
+        "responseType": "json"
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.reserve.fixed",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024"
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 0,
+        "qima_input_2k": 0,
+        "qima_output_1k": 1,
+        "qima_output_2k": 0
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.reserve.auto",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "auto",
+            "image": [
+              "https://fixture.invalid/a",
+              "https://fixture.invalid/b"
+            ],
+            "n": 6
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 2,
+        "qima_input_2k": 2,
+        "qima_output_1k": 6,
+        "qima_output_2k": 6
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.reserve.2k",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "2048x2048",
+            "image": "data:image/png;base64,YQ=="
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 0,
+        "qima_input_2k": 1,
+        "qima_output_1k": 0,
+        "qima_output_2k": 1
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.complete.1k",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "provider-request",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    },
+                    {
+                      "image": "https://fixture.invalid/image-1.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 3,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 2,
+            "output_image_type": "qima_output_1k"
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 3,
+        "qima_input_2k": 0,
+        "qima_output_1k": 2,
+        "qima_output_2k": 0
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.complete.2k",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "provider-request",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_2k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_2k"
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 0,
+        "qima_input_2k": 0,
+        "qima_output_1k": 0,
+        "qima_output_2k": 1
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.failed.noUsage",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "status": "FAILURE"
+        },
+        {
+          "request_id": "provider-request",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k"
+          }
+        }
+      ],
+      "expected": {}
+    },
+    {
+      "name": "qwen-image-3.0-pro.immediate",
+      "hook": "parseSubmitResponse",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "upstream_mode": "sync"
+            }
+          }
+        },
+        {
+          "body": {
+            "request_id": "provider-request",
+            "output": {
+              "task_status": "SUCCEEDED",
+              "choices": [
+                {
+                  "message": {
+                    "role": "assistant",
+                    "content": [
+                      {
+                        "image": "https://fixture.invalid/image-0.png"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "usage": {
+              "input_image_count": 0,
+              "input_image_type": "qima_input_1k",
+              "output_image_count": 1,
+              "output_image_type": "qima_output_1k"
+            }
+          }
+        }
+      ],
+      "expected": {
+        "taskId": "public-test",
+        "taskData": {
+          "request_id": "provider-request",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k"
+          }
+        },
+        "immediate": {
+          "status": "SUCCESS",
+          "progress": "100%",
+          "url": "https://fixture.invalid/image-0.png"
+        }
+      }
+    },
+    {
+      "name": "validate.zero",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "n": 0
+          }
+        }
+      ],
+      "expectedError": "n must"
+    },
+    {
+      "name": "validate.negative",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "n": -1
+          }
+        }
+      ],
+      "expectedError": "n must"
+    },
+    {
+      "name": "validate.fraction",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "n": 1.5
+          }
+        }
+      ],
+      "expectedError": "n must"
+    },
+    {
+      "name": "validate.oversize",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "n": 7
+          }
+        }
+      ],
+      "expectedError": "n must"
+    },
+    {
+      "name": "validate.overflow",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "n": 1e+30
+          }
+        }
+      ],
+      "expectedError": "n must"
+    },
+    {
+      "name": "validate.string",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "n": "2"
+          }
+        }
+      ],
+      "expectedError": "n must"
+    },
+    {
+      "name": "validate.null",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "n": null
+          }
+        }
+      ],
+      "expectedError": "n must"
+    },
+    {
+      "name": "validate.metadata-bypass",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "parameters": {
+                "n": 128
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "n must"
+    },
+    {
+      "name": "validate.bool-string",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "enable_thinking": "false"
+          }
+        }
+      ],
+      "expectedError": "boolean"
+    },
+    {
+      "name": "validate.metadata-bool",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "parameters": {
+                "watermark": 0
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "boolean"
+    },
+    {
+      "name": "validate.bad-size",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "0x2048"
+          }
+        }
+      ],
+      "expectedError": "limits"
+    },
+    {
+      "name": "validate.large-size",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "4096x4096"
+          }
+        }
+      ],
+      "expectedError": "limits"
+    },
+    {
+      "name": "validate.tiny-size",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "100x100"
+          }
+        }
+      ],
+      "expectedError": "limits"
+    },
+    {
+      "name": "validate.bad-ratio",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "256x4096"
+          }
+        }
+      ],
+      "expectedError": "limits"
+    },
+    {
+      "name": "validate.null-image",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": null
+          }
+        }
+      ],
+      "expectedError": "image must"
+    },
+    {
+      "name": "validate.empty-image",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": []
+          }
+        }
+      ],
+      "expectedError": "empty"
+    },
+    {
+      "name": "validate.many-images",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": [
+              "https://fixture.invalid/a",
+              "https://fixture.invalid/a",
+              "https://fixture.invalid/a",
+              "https://fixture.invalid/a"
+            ]
+          }
+        }
+      ],
+      "expectedError": "at most 3"
+    },
+    {
+      "name": "validate.mixed-image",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "https://fixture.invalid/a",
+            "images": [
+              "https://fixture.invalid/b"
+            ]
+          }
+        }
+      ],
+      "expectedError": "not both"
+    },
+    {
+      "name": "validate.agent-edit",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "https://fixture.invalid/a",
+            "prompt_extend_mode": "agent"
+          }
+        }
+      ],
+      "expectedError": "agent"
+    },
+    {
+      "name": "validate.seed-bound",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "seed": 2147483648
+          }
+        }
+      ],
+      "expectedError": "seed"
+    },
+    {
+      "name": "validate.seed-negative",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "seed": -1
+          }
+        }
+      ],
+      "expectedError": "seed"
+    },
+    {
+      "name": "validate.missing-prompt",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "",
+            "size": "1024x1024"
+          }
+        }
+      ],
+      "expectedError": "prompt"
+    },
+    {
+      "name": "validate.unknown-param",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "parameters": {
+                "stream": true
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "unsupported"
+    },
+    {
+      "name": "validate.model-override",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "model": "bad"
+            }
+          }
+        }
+      ],
+      "expectedError": "can't change model"
+    },
+    {
+      "name": "legacy-pricing-denied",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024"
+          },
+          "usagePurpose": "billing_ratios"
+        }
+      ],
+      "expectedError": "requires task usage expression"
+    },
+    {
+      "name": "completion.missing-input",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "provider-request",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k"
+          }
+        }
+      ],
+      "expectedError": "input_image_count"
+    },
+    {
+      "name": "completion.negative-output",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "provider-request",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": -1,
+            "output_image_type": "qima_output_1k"
+          }
+        }
+      ],
+      "expectedError": "output_image_count"
+    },
+    {
+      "name": "completion.wrong-type",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "provider-request",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "other"
+          }
+        }
+      ],
+      "expectedError": "billing type"
+    },
+    {
+      "name": "completion.mismatch",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "provider-request",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 2,
+            "output_image_type": "qima_output_1k"
+          }
+        }
+      ],
+      "expectedError": "disagrees"
+    },
+    {
+      "name": "alias-keeps-upstream",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "my-qwen",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024"
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 0,
+        "qima_input_2k": 0,
+        "qima_output_1k": 1,
+        "qima_output_2k": 0
+      }
+    },
+    {
+      "name": "compatible-native-decode",
+      "hook": "native",
+      "member": "createQwenCompatible",
+      "args": [
+        {
+          "body": {
+            "kind": "json",
+            "value": {
+              "model": "qwen-image-3.0",
+              "prompt": "A red teapot",
+              "image": [
+                "https://fixture.invalid/a"
+              ],
+              "size": "1024x1024",
+              "n": 2
+            }
+          }
+        }
+      ],
+      "expected": {
+        "kind": "submit",
+        "model": "qwen-image-3.0",
+        "action": "image_to_image",
+        "requestBody": {
+          "model": "qwen-image-3.0",
+          "prompt": "A red teapot",
+          "image": [
+            "https://fixture.invalid/a"
+          ],
+          "size": "1024x1024",
+          "n": 2,
+          "metadata": {
+            "upstream_mode": "sync"
+          }
+        }
+      }
+    },
+    {
+      "name": "compatible-no-stream",
+      "hook": "native",
+      "member": "createQwenCompatible",
+      "args": [
+        {
+          "body": {
+            "kind": "json",
+            "value": {
+              "model": "qwen-image-3.0",
+              "prompt": "A red teapot",
+              "image": [
+                "https://fixture.invalid/a"
+              ],
+              "size": "1024x1024",
+              "n": 2,
+              "stream": true
+            }
+          }
+        }
+      ],
+      "expectedError": "streaming"
+    },
+    {
+      "name": "compatible-native-render",
+      "hook": "native",
+      "member": "qwenImageCreated",
+      "args": [
+        {},
+        {
+          "created_at": 123,
+          "data": {
+            "request_id": "provider-request",
+            "output": {
+              "task_status": "SUCCEEDED",
+              "choices": [
+                {
+                  "message": {
+                    "role": "assistant",
+                    "content": [
+                      {
+                        "image": "https://fixture.invalid/image-0.png"
+                      },
+                      {
+                        "image": "https://fixture.invalid/image-1.png"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "usage": {
+              "input_image_count": 1,
+              "input_image_type": "qima_input_1k",
+              "output_image_count": 2,
+              "output_image_type": "qima_output_1k"
+            }
+          }
+        }
+      ],
+      "expected": {
+        "created": 123,
+        "data": [
+          {
+            "url": "https://fixture.invalid/image-0.png"
+          },
+          {
+            "url": "https://fixture.invalid/image-1.png"
+          }
+        ],
+        "usage": {
+          "input_image_count": 1,
+          "input_image_type": "qima_input_1k",
+          "output_image_count": 2,
+          "output_image_type": "qima_output_1k"
+        }
+      }
+    },
+    {
+      "name": "query.PENDING",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "output": {
+            "task_status": "PENDING"
+          }
+        }
+      ],
+      "expected": {
+        "status": "QUEUED"
+      }
+    },
+    {
+      "name": "query.RUNNING",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "output": {
+            "task_status": "RUNNING"
+          }
+        }
+      ],
+      "expected": {
+        "status": "IN_PROGRESS"
+      }
+    },
+    {
+      "name": "query.FAILED",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "output": {
+            "task_status": "FAILED"
+          }
+        }
+      ],
+      "expected": {
+        "status": "FAILURE",
+        "reason": "[QWEN_UPSTREAM_ERROR] 原厂返回错误，请按请求 ID 核查；不要盲目重新生成 [code=upstream_error]"
+      }
+    },
+    {
+      "name": "artifact-all-images",
+      "hook": "listArtifacts",
+      "args": [
+        {
+          "status": "SUCCESS",
+          "data": {
+            "request_id": "provider-request",
+            "output": {
+              "task_status": "SUCCEEDED",
+              "choices": [
+                {
+                  "message": {
+                    "role": "assistant",
+                    "content": [
+                      {
+                        "image": "https://fixture.invalid/image-0.png"
+                      },
+                      {
+                        "image": "https://fixture.invalid/image-1.png"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "usage": {
+              "input_image_count": 0,
+              "input_image_type": "qima_input_1k",
+              "output_image_count": 2,
+              "output_image_type": "qima_output_1k"
+            }
+          }
+        }
+      ],
+      "expected": [
+        {
+          "key": "image-1",
+          "type": "image"
+        },
+        {
+          "key": "image-2",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "name": "artifact-download-no-credentials",
+      "hook": "buildContentRequest",
+      "args": [
+        {
+          "artifactKey": "image-2",
+          "data": {
+            "request_id": "provider-request",
+            "output": {
+              "task_status": "SUCCEEDED",
+              "choices": [
+                {
+                  "message": {
+                    "role": "assistant",
+                    "content": [
+                      {
+                        "image": "https://fixture.invalid/image-0.png"
+                      },
+                      {
+                        "image": "https://fixture.invalid/image-1.png"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "usage": {
+              "input_image_count": 0,
+              "input_image_type": "qima_input_1k",
+              "output_image_count": 2,
+              "output_image_type": "qima_output_1k"
+            }
+          },
+          "clientRequest": {
+            "method": "GET"
+          }
+        }
+      ],
+      "expected": {
+        "url": "https://fixture.invalid/image-1.png",
+        "method": "GET",
+        "credentialless": true
+      }
+    },
+    {
+      "name": "wan-regression.wan3.0-video.buildSubmitRequest",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "wan3.0-video",
+          "upstreamModel": "wan3.0-video",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "wan3.0-video",
+            "prompt": "A red teapot",
+            "resolution": "720P",
+            "seconds": 5,
+            "n": 1
+          }
+        }
+      ],
+      "expected": {
+        "url": "https://fixture.invalid/api/v1/services/aigc/video-generation/video-synthesis",
+        "method": "POST",
+        "headers": {
+          "Authorization": "Bearer fixture-not-a-secret",
+          "Content-Type": "application/json",
+          "X-DashScope-Async": "enable"
+        },
+        "body": {
+          "model": "wan3.0-video",
+          "input": {
+            "prompt": "A red teapot"
+          },
+          "parameters": {
+            "prompt_extend": true,
+            "resolution": "720P",
+            "ratio": "adaptive",
+            "duration": 5
+          }
+        },
+        "action": "text_to_video"
+      }
+    },
+    {
+      "name": "wan-regression.wan3.0-video.extractUsage",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "wan3.0-video",
+          "upstreamModel": "wan3.0-video",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "wan3.0-video",
+            "prompt": "A red teapot",
+            "resolution": "720P",
+            "seconds": 5,
+            "n": 1
+          }
+        }
+      ],
+      "expected": {
+        "seconds": 5,
+        "resolution": "720P"
+      }
+    },
+    {
+      "name": "wan-regression.wan3.0-video-prime.buildSubmitRequest",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "wan3.0-video-prime",
+          "upstreamModel": "wan3.0-video-prime",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "wan3.0-video-prime",
+            "prompt": "A red teapot",
+            "resolution": "720P",
+            "seconds": 5,
+            "n": 1
+          }
+        }
+      ],
+      "expected": {
+        "url": "https://fixture.invalid/api/v1/services/aigc/video-generation/video-synthesis",
+        "method": "POST",
+        "headers": {
+          "Authorization": "Bearer fixture-not-a-secret",
+          "Content-Type": "application/json",
+          "X-DashScope-Async": "enable"
+        },
+        "body": {
+          "model": "wan3.0-video-prime",
+          "input": {
+            "prompt": "A red teapot"
+          },
+          "parameters": {
+            "prompt_extend": true,
+            "resolution": "720P",
+            "ratio": "adaptive",
+            "duration": 5
+          }
+        },
+        "action": "text_to_video"
+      }
+    },
+    {
+      "name": "wan-regression.wan3.0-video-prime.extractUsage",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "wan3.0-video-prime",
+          "upstreamModel": "wan3.0-video-prime",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "wan3.0-video-prime",
+            "prompt": "A red teapot",
+            "resolution": "720P",
+            "seconds": 5,
+            "n": 1
+          }
+        }
+      ],
+      "expected": {
+        "seconds": 5,
+        "resolution": "720P"
+      }
+    },
+    {
+      "name": "wan-regression.wan2.7-image.buildSubmitRequest",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "wan2.7-image",
+          "upstreamModel": "wan2.7-image",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "wan2.7-image",
+            "prompt": "A red teapot",
+            "resolution": "720P",
+            "seconds": 5,
+            "n": 1
+          }
+        }
+      ],
+      "expected": {
+        "url": "https://fixture.invalid/api/v1/services/aigc/image-generation/generation",
+        "method": "POST",
+        "headers": {
+          "Authorization": "Bearer fixture-not-a-secret",
+          "Content-Type": "application/json",
+          "X-DashScope-Async": "enable"
+        },
+        "body": {
+          "model": "wan2.7-image",
+          "input": {
+            "messages": [
+              {
+                "role": "user",
+                "content": [
+                  {
+                    "text": "A red teapot"
+                  }
+                ]
+              }
+            ]
+          },
+          "parameters": {
+            "n": 1
+          }
+        },
+        "action": "text_to_image",
+        "responseType": "json"
+      }
+    },
+    {
+      "name": "wan-regression.wan2.7-image.extractUsage",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "wan2.7-image",
+          "upstreamModel": "wan2.7-image",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "wan2.7-image",
+            "prompt": "A red teapot",
+            "resolution": "720P",
+            "seconds": 5,
+            "n": 1
+          }
+        }
+      ],
+      "expected": {
+        "image_count": 1
+      }
+    },
+    {
+      "name": "qwen-image-3.0.image.broken-base64",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "data:image/png;base64,INVALID"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.native-image.broken-base64",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "data:image/png;base64,INVALID"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.image.empty-base64",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "data:image/png;base64,"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.native-image.empty-base64",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "data:image/png;base64,"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.image.missing-base64",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "data:image/png,abc"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.native-image.missing-base64",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "data:image/png,abc"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.image.padding",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "data:image/png;base64,a==="
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.native-image.padding",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "data:image/png;base64,a==="
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.image.credentials",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "https://user:password@example.com/a"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.native-image.credentials",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "https://user:password@example.com/a"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.image.empty-host",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "https://"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.native-image.empty-host",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "https://"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.image.bad-port",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "https://example.com:99999/a"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.native-image.bad-port",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "https://example.com:99999/a"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.image.control",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "https://example.com/\nx"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.native-image.control",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "https://example.com/\nx"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.image.javascript",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "javascript:alert(1)"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.native-image.javascript",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "javascript:alert(1)"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0.valid-image.data:image/png;base64,",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "data:image/png;base64,YQ=="
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 1,
+        "qima_input_2k": 0,
+        "qima_output_1k": 1,
+        "qima_output_2k": 0
+      }
+    },
+    {
+      "name": "qwen-image-3.0.valid-image.https://example.com/a?",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "https://example.com/a?signature=abc%2Fdef"
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 1,
+        "qima_input_2k": 0,
+        "qima_output_1k": 1,
+        "qima_output_2k": 0
+      }
+    },
+    {
+      "name": "qwen-image-3.0.valid-image.http://[::1]:8000/a",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "http://[::1]:8000/a"
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 1,
+        "qima_input_2k": 0,
+        "qima_output_1k": 1,
+        "qima_output_2k": 0
+      }
+    },
+    {
+      "name": "qwen-image-3.0.uncertain.UNKNOWN",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "UNKNOWN"
+          }
+        }
+      ],
+      "expected": {
+        "status": "UNKNOWN",
+        "reason": "[QWEN_QUERY_UNCERTAIN] 任务结果尚未确认，请核查原任务，不要重新生成 (request_id=12345678-1234-1234-1234-123456789abc)"
+      }
+    },
+    {
+      "name": "qwen-image-3.0.uncertain.NEW_VENDOR_STATE",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "NEW_VENDOR_STATE"
+          }
+        }
+      ],
+      "expected": {
+        "status": "UNKNOWN",
+        "reason": "[QWEN_QUERY_UNCERTAIN] 任务结果尚未确认，请核查原任务，不要重新生成 (request_id=12345678-1234-1234-1234-123456789abc)"
+      }
+    },
+    {
+      "name": "qwen-image-3.0.uncertain.",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": ""
+          }
+        }
+      ],
+      "expected": {
+        "status": "UNKNOWN",
+        "reason": "[QWEN_QUERY_UNCERTAIN] 任务结果尚未确认，请核查原任务，不要重新生成 (request_id=12345678-1234-1234-1234-123456789abc)"
+      }
+    },
+    {
+      "name": "qwen-image-3.0.null-query",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        null
+      ],
+      "expected": {
+        "status": "UNKNOWN",
+        "reason": "[QWEN_QUERY_UNCERTAIN] 无效查询响应，请核查原任务，不要重新生成"
+      }
+    },
+    {
+      "name": "qwen-image-3.0.success-no-image",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "SUCCEEDED"
+          }
+        }
+      ],
+      "expected": {
+        "status": "UNKNOWN",
+        "reason": "[QWEN_QUERY_UNCERTAIN] 原厂报告成功但未返回图片，需要人工核对 (request_id=12345678-1234-1234-1234-123456789abc)"
+      }
+    },
+    {
+      "name": "qwen-image-3.0.query-error.false",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "code": "Throttling",
+          "message": "SECRET_VALUE do not reflect",
+          "output": {
+            "task_status": "RUNNING"
+          }
+        }
+      ],
+      "expected": {
+        "status": "UNKNOWN",
+        "reason": "[QWEN_UPSTREAM_ERROR] 原厂限流，请降低请求频率；确认任务状态后再决定是否重新提交 [code=Throttling] (request_id=12345678-1234-1234-1234-123456789abc)"
+      }
+    },
+    {
+      "name": "qwen-image-3.0.query-error.true",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "code": "Throttling",
+          "message": "SECRET_VALUE do not reflect",
+          "output": {
+            "task_status": "FAILED"
+          }
+        }
+      ],
+      "expected": {
+        "status": "FAILURE",
+        "reason": "[QWEN_UPSTREAM_ERROR] 原厂限流，请降低请求频率；确认任务状态后再决定是否重新提交 [code=Throttling] (request_id=12345678-1234-1234-1234-123456789abc)"
+      }
+    },
+    {
+      "name": "qwen-image-3.0.submit-error",
+      "hook": "parseSubmitResponse",
+      "args": [
+        {
+          "model": "qwen-image-3.0",
+          "upstreamModel": "qwen-image-3.0",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0",
+            "prompt": "A red teapot",
+            "size": "1024x1024"
+          }
+        },
+        {
+          "body": {
+            "request_id": "12345678-1234-1234-1234-123456789abc",
+            "code": "InvalidParameter",
+            "message": "SECRET_VALUE"
+          }
+        }
+      ],
+      "expectedError": "原厂拒绝请求参数"
+    },
+    {
+      "name": "qwen-image-3.0.reconcile.width",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k",
+            "output_width": -1
+          }
+        }
+      ],
+      "expectedError": "QWEN_USAGE_RECONCILIATION"
+    },
+    {
+      "name": "qwen-image-3.0.reconcile.height",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k",
+            "output_width": 1024,
+            "output_height": "1024"
+          }
+        }
+      ],
+      "expectedError": "QWEN_USAGE_RECONCILIATION"
+    },
+    {
+      "name": "qwen-image-3.0.reconcile.unconfirmed",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ],
+            "finished": false
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k"
+          }
+        }
+      ],
+      "expectedError": "QWEN_USAGE_RECONCILIATION"
+    },
+    {
+      "name": "qwen-image-3.0.reconcile.not-success",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "RUNNING",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k"
+          }
+        }
+      ],
+      "expectedError": "QWEN_USAGE_RECONCILIATION"
+    },
+    {
+      "name": "qwen-image-3.0.reconcile.error-envelope",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k"
+          },
+          "code": "Error"
+        }
+      ],
+      "expectedError": "QWEN_USAGE_RECONCILIATION"
+    },
+    {
+      "name": "qwen-image-3.0.reconcile.unsafe-url",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "javascript:alert(1)"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k"
+          }
+        }
+      ],
+      "expectedError": "QWEN_USAGE_RECONCILIATION"
+    },
+    {
+      "name": "qwen-image-3.0.auto-size-provider-facts",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "provider-request",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    },
+                    {
+                      "image": "https://fixture.invalid/image-1.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_2k",
+            "output_image_count": 2,
+            "output_image_type": "qima_output_2k",
+            "output_width": 2528,
+            "output_height": 1696
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 0,
+        "qima_input_2k": 0,
+        "qima_output_1k": 0,
+        "qima_output_2k": 2
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.image.broken-base64",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "data:image/png;base64,INVALID"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.native-image.broken-base64",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "data:image/png;base64,INVALID"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.image.empty-base64",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "data:image/png;base64,"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.native-image.empty-base64",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "data:image/png;base64,"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.image.missing-base64",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "data:image/png,abc"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.native-image.missing-base64",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "data:image/png,abc"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.image.padding",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "data:image/png;base64,a==="
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.native-image.padding",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "data:image/png;base64,a==="
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.image.credentials",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "https://user:password@example.com/a"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.native-image.credentials",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "https://user:password@example.com/a"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.image.empty-host",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "https://"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.native-image.empty-host",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "https://"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.image.bad-port",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "https://example.com:99999/a"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.native-image.bad-port",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "https://example.com:99999/a"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.image.control",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "https://example.com/\nx"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.native-image.control",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "https://example.com/\nx"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.image.javascript",
+      "hook": "buildSubmitRequest",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "javascript:alert(1)"
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.native-image.javascript",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "metadata": {
+              "input": {
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": [
+                      {
+                        "text": "test"
+                      },
+                      {
+                        "image": "javascript:alert(1)"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "expectedError": "QWEN_INVALID_IMAGE"
+    },
+    {
+      "name": "qwen-image-3.0-pro.valid-image.data:image/png;base64,",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "data:image/png;base64,YQ=="
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 1,
+        "qima_input_2k": 0,
+        "qima_output_1k": 1,
+        "qima_output_2k": 0
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.valid-image.https://example.com/a?",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "https://example.com/a?signature=abc%2Fdef"
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 1,
+        "qima_input_2k": 0,
+        "qima_output_1k": 1,
+        "qima_output_2k": 0
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.valid-image.http://[::1]:8000/a",
+      "hook": "extractUsage",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024",
+            "image": "http://[::1]:8000/a"
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 1,
+        "qima_input_2k": 0,
+        "qima_output_1k": 1,
+        "qima_output_2k": 0
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.uncertain.UNKNOWN",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "UNKNOWN"
+          }
+        }
+      ],
+      "expected": {
+        "status": "UNKNOWN",
+        "reason": "[QWEN_QUERY_UNCERTAIN] 任务结果尚未确认，请核查原任务，不要重新生成 (request_id=12345678-1234-1234-1234-123456789abc)"
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.uncertain.NEW_VENDOR_STATE",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "NEW_VENDOR_STATE"
+          }
+        }
+      ],
+      "expected": {
+        "status": "UNKNOWN",
+        "reason": "[QWEN_QUERY_UNCERTAIN] 任务结果尚未确认，请核查原任务，不要重新生成 (request_id=12345678-1234-1234-1234-123456789abc)"
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.uncertain.",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": ""
+          }
+        }
+      ],
+      "expected": {
+        "status": "UNKNOWN",
+        "reason": "[QWEN_QUERY_UNCERTAIN] 任务结果尚未确认，请核查原任务，不要重新生成 (request_id=12345678-1234-1234-1234-123456789abc)"
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.null-query",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        null
+      ],
+      "expected": {
+        "status": "UNKNOWN",
+        "reason": "[QWEN_QUERY_UNCERTAIN] 无效查询响应，请核查原任务，不要重新生成"
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.success-no-image",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "SUCCEEDED"
+          }
+        }
+      ],
+      "expected": {
+        "status": "UNKNOWN",
+        "reason": "[QWEN_QUERY_UNCERTAIN] 原厂报告成功但未返回图片，需要人工核对 (request_id=12345678-1234-1234-1234-123456789abc)"
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.query-error.false",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "code": "Throttling",
+          "message": "SECRET_VALUE do not reflect",
+          "output": {
+            "task_status": "RUNNING"
+          }
+        }
+      ],
+      "expected": {
+        "status": "UNKNOWN",
+        "reason": "[QWEN_UPSTREAM_ERROR] 原厂限流，请降低请求频率；确认任务状态后再决定是否重新提交 [code=Throttling] (request_id=12345678-1234-1234-1234-123456789abc)"
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.query-error.true",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "code": "Throttling",
+          "message": "SECRET_VALUE do not reflect",
+          "output": {
+            "task_status": "FAILED"
+          }
+        }
+      ],
+      "expected": {
+        "status": "FAILURE",
+        "reason": "[QWEN_UPSTREAM_ERROR] 原厂限流，请降低请求频率；确认任务状态后再决定是否重新提交 [code=Throttling] (request_id=12345678-1234-1234-1234-123456789abc)"
+      }
+    },
+    {
+      "name": "qwen-image-3.0-pro.submit-error",
+      "hook": "parseSubmitResponse",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro",
+          "upstreamModel": "qwen-image-3.0-pro",
+          "baseUrl": "https://fixture.invalid",
+          "apiKey": "fixture-not-a-secret",
+          "publicTaskId": "public-test",
+          "requestBody": {
+            "model": "qwen-image-3.0-pro",
+            "prompt": "A red teapot",
+            "size": "1024x1024"
+          }
+        },
+        {
+          "body": {
+            "request_id": "12345678-1234-1234-1234-123456789abc",
+            "code": "InvalidParameter",
+            "message": "SECRET_VALUE"
+          }
+        }
+      ],
+      "expectedError": "原厂拒绝请求参数"
+    },
+    {
+      "name": "qwen-image-3.0-pro.reconcile.width",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k",
+            "output_width": -1
+          }
+        }
+      ],
+      "expectedError": "QWEN_USAGE_RECONCILIATION"
+    },
+    {
+      "name": "qwen-image-3.0-pro.reconcile.height",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k",
+            "output_width": 1024,
+            "output_height": "1024"
+          }
+        }
+      ],
+      "expectedError": "QWEN_USAGE_RECONCILIATION"
+    },
+    {
+      "name": "qwen-image-3.0-pro.reconcile.unconfirmed",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ],
+            "finished": false
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k"
+          }
+        }
+      ],
+      "expectedError": "QWEN_USAGE_RECONCILIATION"
+    },
+    {
+      "name": "qwen-image-3.0-pro.reconcile.not-success",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "RUNNING",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k"
+          }
+        }
+      ],
+      "expectedError": "QWEN_USAGE_RECONCILIATION"
+    },
+    {
+      "name": "qwen-image-3.0-pro.reconcile.error-envelope",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k"
+          },
+          "code": "Error"
+        }
+      ],
+      "expectedError": "QWEN_USAGE_RECONCILIATION"
+    },
+    {
+      "name": "qwen-image-3.0-pro.reconcile.unsafe-url",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "12345678-1234-1234-1234-123456789abc",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "javascript:alert(1)"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_1k",
+            "output_image_count": 1,
+            "output_image_type": "qima_output_1k"
+          }
+        }
+      ],
+      "expectedError": "QWEN_USAGE_RECONCILIATION"
+    },
+    {
+      "name": "qwen-image-3.0-pro.auto-size-provider-facts",
+      "hook": "extractUsageOnComplete",
+      "args": [
+        {
+          "model": "qwen-image-3.0-pro"
+        },
+        {
+          "status": "SUCCESS"
+        },
+        {
+          "request_id": "provider-request",
+          "output": {
+            "task_status": "SUCCEEDED",
+            "choices": [
+              {
+                "message": {
+                  "role": "assistant",
+                  "content": [
+                    {
+                      "image": "https://fixture.invalid/image-0.png"
+                    },
+                    {
+                      "image": "https://fixture.invalid/image-1.png"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "usage": {
+            "input_image_count": 0,
+            "input_image_type": "qima_input_2k",
+            "output_image_count": 2,
+            "output_image_type": "qima_output_2k",
+            "output_width": 2528,
+            "output_height": 1696
+          }
+        }
+      ],
+      "expected": {
+        "qima_input_1k": 0,
+        "qima_input_2k": 0,
+        "qima_output_1k": 0,
+        "qima_output_2k": 2
+      }
+    },
+    {
+      "name": "wan-query.wan3.0-video.PENDING",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "wan3.0-video"
+        },
+        {
+          "output": {
+            "task_status": "PENDING"
+          }
+        }
+      ],
+      "expected": {
+        "status": "QUEUED"
+      }
+    },
+    {
+      "name": "wan-query.wan3.0-video.RUNNING",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "wan3.0-video"
+        },
+        {
+          "output": {
+            "task_status": "RUNNING"
+          }
+        }
+      ],
+      "expected": {
+        "status": "IN_PROGRESS"
+      }
+    },
+    {
+      "name": "wan-query.wan3.0-video.UNKNOWN",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "wan3.0-video"
+        },
+        {
+          "output": {
+            "task_status": "UNKNOWN"
+          }
+        }
+      ],
+      "expected": {
+        "status": "FAILURE",
+        "reason": "task failed"
+      }
+    },
+    {
+      "name": "wan-query.wan3.0-video.FAILED",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "wan3.0-video"
+        },
+        {
+          "output": {
+            "task_status": "FAILED"
+          }
+        }
+      ],
+      "expected": {
+        "status": "FAILURE",
+        "reason": "task failed"
+      }
+    },
+    {
+      "name": "wan-query.wan3.0-video.SUCCEEDED",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "wan3.0-video"
+        },
+        {
+          "output": {
+            "task_status": "SUCCEEDED"
+          }
+        }
+      ],
+      "expected": {
+        "status": "SUCCESS",
+        "url": ""
+      }
+    },
+    {
+      "name": "wan-query.wan3.0-video-prime.PENDING",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "wan3.0-video-prime"
+        },
+        {
+          "output": {
+            "task_status": "PENDING"
+          }
+        }
+      ],
+      "expected": {
+        "status": "QUEUED"
+      }
+    },
+    {
+      "name": "wan-query.wan3.0-video-prime.RUNNING",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "wan3.0-video-prime"
+        },
+        {
+          "output": {
+            "task_status": "RUNNING"
+          }
+        }
+      ],
+      "expected": {
+        "status": "IN_PROGRESS"
+      }
+    },
+    {
+      "name": "wan-query.wan3.0-video-prime.UNKNOWN",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "wan3.0-video-prime"
+        },
+        {
+          "output": {
+            "task_status": "UNKNOWN"
+          }
+        }
+      ],
+      "expected": {
+        "status": "FAILURE",
+        "reason": "task failed"
+      }
+    },
+    {
+      "name": "wan-query.wan3.0-video-prime.FAILED",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "wan3.0-video-prime"
+        },
+        {
+          "output": {
+            "task_status": "FAILED"
+          }
+        }
+      ],
+      "expected": {
+        "status": "FAILURE",
+        "reason": "task failed"
+      }
+    },
+    {
+      "name": "wan-query.wan3.0-video-prime.SUCCEEDED",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "wan3.0-video-prime"
+        },
+        {
+          "output": {
+            "task_status": "SUCCEEDED"
+          }
+        }
+      ],
+      "expected": {
+        "status": "SUCCESS",
+        "url": ""
+      }
+    },
+    {
+      "name": "wan-query.wan2.7-image.PENDING",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "wan2.7-image"
+        },
+        {
+          "output": {
+            "task_status": "PENDING"
+          }
+        }
+      ],
+      "expected": {
+        "status": "QUEUED"
+      }
+    },
+    {
+      "name": "wan-query.wan2.7-image.RUNNING",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "wan2.7-image"
+        },
+        {
+          "output": {
+            "task_status": "RUNNING"
+          }
+        }
+      ],
+      "expected": {
+        "status": "IN_PROGRESS"
+      }
+    },
+    {
+      "name": "wan-query.wan2.7-image.UNKNOWN",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "wan2.7-image"
+        },
+        {
+          "output": {
+            "task_status": "UNKNOWN"
+          }
+        }
+      ],
+      "expected": {
+        "status": "FAILURE",
+        "reason": "task failed"
+      }
+    },
+    {
+      "name": "wan-query.wan2.7-image.FAILED",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "wan2.7-image"
+        },
+        {
+          "output": {
+            "task_status": "FAILED"
+          }
+        }
+      ],
+      "expected": {
+        "status": "FAILURE",
+        "reason": "task failed"
+      }
+    },
+    {
+      "name": "wan-query.wan2.7-image.SUCCEEDED",
+      "hook": "parseTaskResult",
+      "args": [
+        {
+          "model": "wan2.7-image"
+        },
+        {
+          "output": {
+            "task_status": "SUCCEEDED"
+          }
+        }
+      ],
+      "expected": {
+        "status": "FAILURE",
+        "reason": "image task succeeded without any images"
+      }
+    }
+  ]
+}

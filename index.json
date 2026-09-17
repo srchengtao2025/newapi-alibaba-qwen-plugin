@@ -1,0 +1,386 @@
+{
+  "indexVersion": 1,
+  "name": "New API Official Plugins",
+  "plugins": [
+    {
+      "key": "alibaba",
+      "name": "Alibaba Bailian · Qwen extension",
+      "icon": "Bailian.Color",
+      "description": {
+        "en": "Private Qwen Image 3.0 extension of the QuantumNous Alibaba image and video plugin",
+        "zh": "基于QuantumNous官方插件的私有扩展：万相图片视频与千问图片3.0"
+      },
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/ali/compatible-mode/v1/images/generations",
+          "type": "submit",
+          "decode": "createQwenCompatible",
+          "render": "qwenImageCreated",
+          "models": [
+            "qwen-image-3.0",
+            "qwen-image-3.0-pro"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/ali/api/v1/services/aigc/multimodal-generation/generation",
+          "type": "submit",
+          "decode": "createImageTask",
+          "render": "imageCreated",
+          "models": [
+            "qwen-image-3.0",
+            "qwen-image-3.0-pro",
+            "wan2.7-image-pro",
+            "wan2.7-image",
+            "wan2.6-image",
+            "wan2.6-t2i"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/ali/api/v1/services/aigc/image-generation/generation",
+          "type": "submit",
+          "decode": "createImageTask",
+          "render": "taskCreated",
+          "models": [
+            "qwen-image-3.0",
+            "qwen-image-3.0-pro",
+            "wan2.7-image-pro",
+            "wan2.7-image",
+            "wan2.6-image",
+            "wan2.6-t2i"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/ali/api/v1/services/aigc/text2image/image-synthesis",
+          "type": "submit",
+          "decode": "createImageTask",
+          "render": "taskCreated",
+          "models": [
+            "wan2.5-t2i-preview",
+            "wan2.2-t2i-flash",
+            "wan2.2-t2i-plus",
+            "wanx2.1-t2i-turbo",
+            "wanx2.1-t2i-plus",
+            "wanx2.0-t2i-turbo"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/ali/api/v1/services/aigc/video-generation/video-synthesis",
+          "type": "submit",
+          "decode": "createVideoTask",
+          "render": "taskCreated"
+        },
+        {
+          "method": "POST",
+          "path": "/ali/api/v1/services/aigc/image2video/video-synthesis",
+          "type": "submit",
+          "decode": "createVideoTask",
+          "render": "taskCreated"
+        },
+        {
+          "method": "GET",
+          "path": "/ali/api/v1/tasks/:task_id",
+          "type": "query",
+          "render": "taskStatus",
+          "taskIdParam": "task_id"
+        }
+      ],
+      "protocols": [
+        {
+          "name": "openai_responses",
+          "supports": [
+            "stream",
+            "sync",
+            "background"
+          ]
+        },
+        {
+          "name": "openai_video",
+          "models": [
+            "wan3.0-video",
+            "wan3.0-video-prime",
+            "wan2.7-t2v",
+            "wan2.7-i2v",
+            "wan2.6-t2v",
+            "wan2.6-t2v-us",
+            "wan2.6-i2v",
+            "wan2.6-i2v-flash",
+            "wan2.6-i2v-us",
+            "wan2.5-t2v-preview",
+            "wan2.5-i2v-preview",
+            "wan2.2-t2v-plus",
+            "wan2.2-i2v-flash",
+            "wan2.2-i2v-plus",
+            "wan2.2-kf2v-flash",
+            "wan2.2-s2v",
+            "wanx2.1-t2v-plus",
+            "wanx2.1-t2v-turbo",
+            "wanx2.1-i2v-plus",
+            "wanx2.1-i2v-turbo",
+            "wan2.7-t2v-2026-04-25",
+            "wan2.7-t2v-2026-06-12",
+            "wan2.7-i2v-2026-04-25"
+          ]
+        }
+      ],
+      "usageSchema": {
+        "image_count": {
+          "type": "number",
+          "unit": "count",
+          "unitLabel": {
+            "en": "image",
+            "fr": "image",
+            "ja": "枚",
+            "ru": "изображение",
+            "vi": "ảnh",
+            "zh": "张",
+            "zh-TW": "張"
+          },
+          "description": {
+            "en": "Image generation unit price",
+            "zh": "图片生成单价"
+          }
+        },
+        "resolution": {
+          "enum": [
+            "480P",
+            "720P",
+            "1080P"
+          ],
+          "description": {
+            "en": "Output video resolution",
+            "zh": "输出视频分辨率"
+          },
+          "enumLabels": {
+            "1080P": {
+              "en": "1080P",
+              "zh": "1080P"
+            },
+            "480P": {
+              "en": "480P",
+              "zh": "480P"
+            },
+            "720P": {
+              "en": "720P",
+              "zh": "720P"
+            }
+          }
+        },
+        "seconds": {
+          "type": "number",
+          "unit": "second",
+          "description": {
+            "en": "Video generation unit price",
+            "zh": "视频生成单价"
+          }
+        }
+      },
+      "usageExamples": null,
+      "usageProfiles": [
+        {
+          "models": [
+            "qwen-image-3.0",
+            "qwen-image-3.0-pro"
+          ],
+          "schema": {
+            "qima_input_1k": {
+              "type": "number",
+              "unit": "count",
+              "description": {
+                "en": "1K input image unit price",
+                "zh": "1K输入图片单价"
+              }
+            },
+            "qima_input_2k": {
+              "type": "number",
+              "unit": "count",
+              "description": {
+                "en": "2K input image unit price",
+                "zh": "2K输入图片单价"
+              }
+            },
+            "qima_output_1k": {
+              "type": "number",
+              "unit": "count",
+              "description": {
+                "en": "1K output image unit price",
+                "zh": "1K输出图片单价"
+              }
+            },
+            "qima_output_2k": {
+              "type": "number",
+              "unit": "count",
+              "description": {
+                "en": "2K output image unit price",
+                "zh": "2K输出图片单价"
+              }
+            }
+          }
+        },
+        {
+          "models": [
+            "wan2.7-image-pro",
+            "wan2.7-image",
+            "wan2.6-image",
+            "wan2.6-t2i",
+            "wan2.5-t2i-preview",
+            "wan2.2-t2i-flash",
+            "wan2.2-t2i-plus",
+            "wanx2.1-t2i-turbo",
+            "wanx2.1-t2i-plus",
+            "wanx2.0-t2i-turbo"
+          ],
+          "schema": {
+            "image_count": {
+              "type": "number",
+              "unit": "count",
+              "unitLabel": {
+                "en": "image",
+                "fr": "image",
+                "ja": "枚",
+                "ru": "изображение",
+                "vi": "ảnh",
+                "zh": "张",
+                "zh-TW": "張"
+              },
+              "description": {
+                "en": "Image generation unit price",
+                "zh": "图片生成单价"
+              }
+            }
+          }
+        },
+        {
+          "models": [
+            "wan3.0-video",
+            "wan3.0-video-prime",
+            "wan2.7-t2v",
+            "wan2.7-i2v",
+            "wan2.6-t2v",
+            "wan2.6-t2v-us",
+            "wan2.6-i2v",
+            "wan2.6-i2v-flash",
+            "wan2.6-i2v-us",
+            "wan2.5-t2v-preview",
+            "wan2.5-i2v-preview",
+            "wan2.2-t2v-plus",
+            "wan2.2-i2v-flash",
+            "wan2.2-i2v-plus",
+            "wan2.2-kf2v-flash",
+            "wan2.2-s2v",
+            "wanx2.1-t2v-plus",
+            "wanx2.1-t2v-turbo",
+            "wanx2.1-i2v-plus",
+            "wanx2.1-i2v-turbo",
+            "wan2.7-t2v-2026-04-25",
+            "wan2.7-t2v-2026-06-12",
+            "wan2.7-i2v-2026-04-25"
+          ],
+          "schema": {
+            "resolution": {
+              "enum": [
+                "480P",
+                "720P",
+                "1080P"
+              ],
+              "description": {
+                "en": "Output video resolution",
+                "zh": "输出视频分辨率"
+              },
+              "enumLabels": {
+                "1080P": {
+                  "en": "1080P",
+                  "zh": "1080P"
+                },
+                "480P": {
+                  "en": "480P",
+                  "zh": "480P"
+                },
+                "720P": {
+                  "en": "720P",
+                  "zh": "720P"
+                }
+              }
+            },
+            "seconds": {
+              "type": "number",
+              "unit": "second",
+              "description": {
+                "en": "Video generation unit price",
+                "zh": "视频生成单价"
+              }
+            }
+          }
+        }
+      ],
+      "channelTypes": [
+        17
+      ],
+      "models": [
+        "qwen-image-3.0",
+        "qwen-image-3.0-pro",
+        "wan3.0-video",
+        "wan3.0-video-prime",
+        "wan2.7-t2v",
+        "wan2.7-t2v-2026-04-25",
+        "wan2.7-t2v-2026-06-12",
+        "wan2.7-i2v",
+        "wan2.7-i2v-2026-04-25",
+        "wan2.6-t2v",
+        "wan2.6-t2v-us",
+        "wan2.6-i2v",
+        "wan2.6-i2v-flash",
+        "wan2.6-i2v-us",
+        "wan2.5-t2v-preview",
+        "wan2.5-i2v-preview",
+        "wan2.2-t2v-plus",
+        "wan2.2-i2v-flash",
+        "wan2.2-i2v-plus",
+        "wan2.2-kf2v-flash",
+        "wan2.2-s2v",
+        "wanx2.1-t2v-plus",
+        "wanx2.1-t2v-turbo",
+        "wanx2.1-i2v-plus",
+        "wanx2.1-i2v-turbo",
+        "wan2.7-image-pro",
+        "wan2.7-image",
+        "wan2.6-image",
+        "wan2.6-t2i",
+        "wan2.5-t2i-preview",
+        "wan2.2-t2i-flash",
+        "wan2.2-t2i-plus",
+        "wanx2.1-t2i-turbo",
+        "wanx2.1-t2i-plus",
+        "wanx2.0-t2i-turbo"
+      ],
+      "latest": "1.3.1-qwen.2",
+      "versions": [
+        {
+          "version": "1.3.1-qwen.2",
+          "path": "plugins/tasks/alibaba/1.3.1-qwen.2/plugin.js",
+          "sha256": "c2fd801fc9ed555fc6cd9c342ebf8c0873cd1e6628d3bf2858629348fcd3c701",
+          "minApiVersion": 1,
+          "kind": "task"
+        },
+        {
+          "version": "1.3.1-qwen.1",
+          "path": "plugins/tasks/alibaba/1.3.1-qwen.1/plugin.js",
+          "sha256": "4a7784fad465b2018f4adb887c41fb80d502ede8de7fbcc2b7e0cd1b7f4b5a53",
+          "minApiVersion": 1,
+          "kind": "task"
+        },
+        {
+          "version": "1.3.0",
+          "path": "plugins/tasks/alibaba/1.3.0/plugin.js",
+          "sha256": "52da5d589b6e48c77991d07df4e7c54a7ea9c303d273c5951cca26f030da6b82",
+          "minApiVersion": 1,
+          "kind": "task"
+        }
+      ]
+    }
+  ]
+}
